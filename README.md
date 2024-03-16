@@ -1,16 +1,5 @@
-# Sfera
-Lab experience 
-Hello
-I'm Samuele Di Valeriano
-today is March the 8th
+## Sfera
 
-Martina opened it in the same day at 5.20 p.m. 
+# Lista deo programmi e del loro utilizzo:
 
-Hi everyone
-
-Prova by Sam, 9/3 15:35
-
-Hello!! Let's see if it works...  Non funziona. AAAAAAAA
-
-
-This is the develop Branch
++ asciiToTree_Folder.cpp : Converte i file raw di presa dati in una cartella direttamente in .Root
