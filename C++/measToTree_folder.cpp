@@ -47,12 +47,10 @@ int main( int argc, char* argv[] ) {
 
       std::cout << "-> Opened measurements-only data file: " << fileName << std::endl;
       
-      std::string Fn = path.filename();
+      std::string Fn;
       
-      Fn = Myname.erase(dPos,Extension.size())+".root";
-      
+      Fn = (dPos+Extension.size()-1==Myname.size()-1)?Myname.erase(dPos,Extension.size())+"_0000.root": Myname.erase(dPos,Extension.size())+".root";
       std::string outfileName = OutDir+"/"+Fn;
-
       TFile* outfile = TFile::Open( outfileName.c_str(), "recreate" );
       TTree* tree = new TTree( "tree", "" );
 
