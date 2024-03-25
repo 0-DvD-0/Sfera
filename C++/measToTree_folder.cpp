@@ -49,7 +49,7 @@ int main( int argc, char* argv[] ) {
       
       std::string Fn = path.filename();
       
-      Fn = Myname.erase(dPos,Extension.size())+".root";
+      Fn = (dPos+Extension.size()==Myname.size())?Myname.erase(dPos,Extension.size())+"_0000.root": Myname.erase(dPos,Extension.size())+".root";
       
       std::string outfileName = OutDir+"/"+Fn;
 
