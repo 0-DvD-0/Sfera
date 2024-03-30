@@ -12,6 +12,7 @@
 namespace fs = std::filesystem;
 
 bool isNumber(const std::string& s);
+void Parse(fs::path path);
 
 
 int main( int argc, char* argv[] ) {
@@ -23,16 +24,43 @@ int main( int argc, char* argv[] ) {
 
   }
 
-  std::string Directory_s = argv[1];
-  std::string Extension = ".dat";
-  std::string OutDir = "../Dati";
+  std::string Input = argv[1];
 
-  const fs::path Dir{Directory_s};
+  if (Input.rfind(".dat")!=std::string::npos)
+  { 
+    const fs::path fpath{Input};
+    Parse(fpath);
+  }
+  else
+  {
+    const fs::path Dir{Input};
 
-  for (auto const& file : fs::directory_iterator{Dir}){
+    for (auto const& file : fs::directory_iterator{Dir}){
+
+      Parse(file.path());
+    
+    }
+  }
+  
+  return 0;
+
+}
 
 
-    fs::path path = file.path();
+
+bool isNumber(const std::string& s) {
+
+  std::string::const_iterator it = s.begin();
+  while (it != s.end() && (std::isdigit(*it) || (*it)==std::string(".") || (*it)==std::string("-")) ) ++it;
+  return !s.empty() && it == s.end();
+
+}
+
+void Parse(fs::path path){
+    
+    
+    std::string Extension = ".dat";
+    std::string OutDir = "../Dati";
     std::string fileName(path);
     std::string Myname = path.filename();
     std::size_t dPos = Myname.rfind(Extension);
@@ -51,6 +79,7 @@ int main( int argc, char* argv[] ) {
       
       Fn = (dPos+Extension.size()-1==Myname.size()-1)?Myname.erase(dPos,Extension.size())+"_0000.root": Myname.erase(dPos,Extension.size())+".root";
       std::string outfileName = OutDir+"/"+Fn;
+      
       TFile* outfile = TFile::Open( outfileName.c_str(), "recreate" );
       TTree* tree = new TTree( "tree", "" );
 
@@ -154,18 +183,6 @@ int main( int argc, char* argv[] ) {
 
       std::cout << "-> Tree saved in: " << outfile->GetName() << std::endl;
       }
-    }
-  return 0;
-
-}
-
-
-
-bool isNumber(const std::string& s) {
-
-  std::string::const_iterator it = s.begin();
-  while (it != s.end() && (std::isdigit(*it) || (*it)==std::string(".") || (*it)==std::string("-")) ) ++it;
-  return !s.empty() && it == s.end();
 
 }
 
