@@ -18,11 +18,13 @@ asciiToTree: asciiToTree_Folder.cpp
 measToTree: measToTree_folder.cpp 
 	mkdir -p $(MYDIR)
 	$(CC) -Wall $(INCLUDES) -o ../build/measToTree measToTree_folder.cpp $(ROOTFLAG) $(EXTRALIBS)
-
-all: asciiToTree measToTree
+EverythingToTree: EverythingToTree.cpp
+	mkdir -p $(MYDIR)
+	$(CC) -Wall $(INCLUDES) -o ../build/EverythingToTree EverythingToTree.cpp $(ROOTFLAG) $(EXTRALIBS)
+all: asciiToTree measToTree EverythingToTree
 
 
 clean:
-	rm ../build/asciiToTree ../build/measToTree
+	rm ../build/asciiToTree ../build/measToTree ../build/EverythingToTree
 
 
