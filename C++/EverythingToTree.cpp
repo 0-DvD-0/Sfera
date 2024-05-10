@@ -19,9 +19,9 @@ int main( int argc, char* argv[] ) {
 
   if( argc != 2 ) {
 
-    std::cout << "USAGE: ./EverythingToTree [Folder]    -To convert every file inside the target folder"<<std::endl;
-    std::cout << "USAGE: ./EverythingToTree [File Name] -To convert a single file"<<std::endl<<std::endl;
-    std::cout << "The output is stored in ../Dati" << std::endl;
+    std::cout << "\t USAGE: ./EverythingToTree [Folder Path]    -To convert every file inside the target folder"<<std::endl;
+    std::cout << "\t USAGE: ./EverythingToTree [File Path] -To convert a single file"<<std::endl<<std::endl;
+    std::cout << "\t The output is stored in ../Dati" << std::endl;
     exit(1);
 
   }
@@ -36,7 +36,10 @@ int main( int argc, char* argv[] ) {
 
   else if (std::filesystem::is_directory(Input))
   {
+
+    std::cout<<"-> Opening folder:"<<Input<<std::endl;
     const fs::path Dir{Input};
+
 
     for (auto const& file : fs::directory_iterator{Dir}){
 
@@ -45,7 +48,7 @@ int main( int argc, char* argv[] ) {
     }
   }else{
 
-    std::cout<<"Bad Input path :("<<std::endl;
+    std::cout<<"\t Bad Input path :("<<std::endl;
 
   }
   
@@ -69,10 +72,15 @@ void Parse(fs::path path){
     std::string Extension = ".dat";
     std::string OutDir = "../Dati";
     std::string fileName(path);
+    
+    bool IsAscii = (fileName.rfind("Ascii.dat")!=std::string::npos)?true:false;
+    
     std::string Myname = path.filename();
     std::size_t dPos = Myname.rfind(Extension);
+    std::string PEvent = (IsAscii)?"EVENT":"Event";
 
-    bool IsAscii = (fileName.rfind("Ascii.dat")!=std::string::npos)?true:false;
+    int BaseIndex = (IsAscii)?3:2;
+
     
     if (dPos!=std::string::npos){
     
@@ -129,7 +137,7 @@ void Parse(fs::path path){
 
       if( fs.good() ) {
 
-        std::cout << "-> Starting parsing file." << std::endl;
+        std::cout << "->   Starting parsing file:" << std::endl;
         nch=0;
 
         while( getline(fs,line) ) {
@@ -141,6 +149,7 @@ void Parse(fs::path path){
           size_t pos = 0;
           std::vector<std::string> words;
           std::string word;
+
           while ((pos = line.find(delimiter)) != std::string::npos) {
             word = line.substr(0, pos);
             line.erase(0, pos + delimiter.length());
@@ -154,26 +163,25 @@ void Parse(fs::path path){
 
           if (words.size()==0) continue; // protect from truncated data-taking 
           
-          if( words[0]=="===" && words[1]=="Event" && wasReadingEvent ) {
+          if( words[0]=="===" && (words[1]==PEvent) && wasReadingEvent ) {
 
-            if( ev % 1000 == 0 ) std::cout << "   ... analyzing event: " << ev << std::endl;
+            if( ev % 1000 == 0 ) std::cout << "     ... analyzing event: " << ev << std::endl;
 
             tree->Fill();
     
             nch = 0;
             wasReadingEvent = false;
 
-          } else if( words[0]!="===" && words_cleaned.size()==7 ) {
-
+          } else if( (words[0]!="===" && words_cleaned.size()==7) || (words[0]=="===" && words[1]=="CH:")) {
             wasReadingEvent = true;
             readyForPulseShape = true;
 
             ch       [nch] = atoi(words_cleaned[0].c_str());
-            base     [nch] = atof(words_cleaned[2].c_str());
-            amp      [nch] = atof(words_cleaned[3].c_str());
-            charge   [nch] = atof(words_cleaned[4].c_str());
-            letime   [nch] = atof(words_cleaned[5].c_str());
-            tetime   [nch] = atof(words_cleaned[6].c_str());
+            base     [nch] = atof(words_cleaned[BaseIndex].c_str());
+            amp      [nch] = atof(words_cleaned[BaseIndex+1].c_str());
+            charge   [nch] = atof(words_cleaned[BaseIndex+2].c_str());
+            letime   [nch] = atof(words_cleaned[BaseIndex+3].c_str());
+            tetime   [nch] = atof(words_cleaned[BaseIndex+4].c_str());
             //ratecount[ch] = atof(words_cleaned[15].c_str());
 
             nch += 1;
@@ -188,7 +196,7 @@ void Parse(fs::path path){
       
           }
 
-          if( words[0]=="===" && words[1]=="Event" && wasReadingEvent==false ) {
+          if( words[0]=="===" && (words[1]==PEvent)&& wasReadingEvent==false ) {
             ev            = atoi(words[2].c_str());	
             //std::cout << ev << std::endl;
           }
@@ -199,7 +207,7 @@ void Parse(fs::path path){
 
       if( wasReadingEvent )
         {
-          std::cout << "   ... analyzing event: " << ev << std::endl;
+          std::cout << "     ... analyzing event: " << ev << std::endl;
           tree->Fill();
         }
 
