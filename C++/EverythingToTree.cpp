@@ -17,6 +17,7 @@ void Parse(fs::path path);
 
 int main( int argc, char* argv[] ) {
 
+  //Input check
   if( argc != 2 ) {
 
     std::cout << "\t USAGE: ./EverythingToTree [Folder Path]    -To convert every file inside the target folder"<<std::endl;
@@ -28,12 +29,14 @@ int main( int argc, char* argv[] ) {
 
   std::string Input = argv[1];
 
+  //Parse File
   if (Input.rfind(".dat")!=std::string::npos)
   { 
     const fs::path fpath{Input};
     Parse(fpath);
   }
 
+  //If Folder iterate over file
   else if (std::filesystem::is_directory(Input))
   {
 
@@ -49,7 +52,7 @@ int main( int argc, char* argv[] ) {
   }else{
 
     std::cout<<"\t Bad Input path :("<<std::endl;
-
+    exit(1);
   }
   
   return 0;
