@@ -19,9 +19,9 @@ int main( int argc, char* argv[] ) {
 
   if( argc != 2 ) {
 
-    std::cout << "USAGE: ./EverythingToTree [Folder]    -To convert every file inside the target folder\n
-                  USAGE: ./EverythingToTree [File Name] -To convert a single file\n\n 
-                  The output is stored in ../Dati" << std::endl;
+    std::cout << "USAGE: ./EverythingToTree [Folder]    -To convert every file inside the target folder"<<std::endl;
+    std::cout << "USAGE: ./EverythingToTree [File Name] -To convert a single file"<<std::endl<<std::endl;
+    std::cout << "The output is stored in ../Dati" << std::endl;
     exit(1);
 
   }
@@ -45,7 +45,7 @@ int main( int argc, char* argv[] ) {
     }
   }else{
 
-    cout<<"Bad Input path :("<<endl;
+    std::cout<<"Bad Input path :("<<std::endl;
 
   }
   
@@ -83,7 +83,7 @@ void Parse(fs::path path){
       }
       if(IsAscii){
         
-        std::cout << "-> Opened ascii data file: " << file.path() << std::endl;
+        std::cout << "-> Opened ascii data file: " << fileName << std::endl;
       
       }else{
         std::cout << "-> Opened measurements-only data file: " << fileName << std::endl;
