@@ -18,7 +18,9 @@ asciiToTree: asciiToTree_Folder.cpp
 measToTree: measToTree_folder.cpp 
 	mkdir -p $(MYDIR)
 	$(CC) -Wall $(INCLUDES) -o ../build/measToTree measToTree_folder.cpp $(ROOTFLAG) $(EXTRALIBS)
-
+FilterToTree: FilterToTree.cpp
+	mkdir -p $(MYDIR)
+	$(CC) -Wall $(INCLUDES) -o ../build/FilterToTree FilterToTree.cpp $(ROOTFLAG) $(EXTRALIBS)
 all: asciiToTree measToTree
 
 
