@@ -64,13 +64,14 @@ bool IsValid(float charge[]){
 
   int sum = 0;
 
-  float Q_lims[] = {  -350, -600, 0, -600, 
+  float Q_lims[] = {0,0,0,0,  
+                -350, -600, 0, -600, 
                 0, -250, -250, -350, 
                 -350, -550, -550, -800};
 
 
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < 16; i++)
     {
       sum += int(charge[i] < Q_lims[i]);
     }
