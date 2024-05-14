@@ -131,13 +131,13 @@ void Parse(fs::path path){
 
       int ev;
       int nch;
-      int   ch       [128];
-      float base     [128];
-      float amp      [128];
-      float charge   [128];
-      float letime   [128];
-      float tetime   [128];
-      float pshape   [128][1024];
+      int   ch       [20];
+      float base     [20];
+      float amp      [20];
+      float charge   [20];
+      float letime   [20];
+      float tetime   [20];
+      float pshape   [20][1024];
 
       tree->Branch( "ev"       , &ev      , "ev/I"            );
       tree->Branch( "nch"      , &nch     , "nch/I"           );
@@ -163,25 +163,29 @@ void Parse(fs::path path){
         std::cout << "-->  Starting parsing file:" << std::endl;
         nch=0;
         std::istringstream iss;
+        std::vector<std::string> words;
+        std::vector< std::string > words_cleaned;
+        std::string word;
+
 
         while( getline(fs,line) ) {
 
           //std::cout << line << std::endl;
           line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
 
-          std::vector<std::string> words;
-          std::vector< std::string > words_cleaned;
-          std::string word;
-
+          words.clear();
+          words_cleaned.clear();
           iss.clear();
           iss.str(line);
     
           while (std::getline(iss, word, ' ')) {
-              if (isNumber(word)) {
 
-                  words_cleaned.push_back(word);
+              
+              if (isNumber(word)) {
+                words_cleaned.push_back(word);
               }
-              words.push_back(word);
+              else {words.push_back(word);}
+              
           }
 
           if (words.size()==0) continue; // protect from truncated data-taking 
@@ -222,7 +226,7 @@ void Parse(fs::path path){
           }
 
           if( words[0]=="===" && (words[1]==PEvent)&& wasReadingEvent==false ) {
-            ev = std::stoi(words[2]);
+            ev = std::stoi(words_cleaned[0]);
             //std::cout << ev << std::endl;
           }
 
