@@ -23,8 +23,8 @@ int main( int argc, char* argv[] ) {
   //Input check
   if( argc != 2 ) {
 
-    std::cout << "\t USAGE: ./FilterToTree [Folder Path]    -To convert every file inside the target folder and filter for Orthopositronium"<<std::endl;
-    std::cout << "\t USAGE: ./FilterToTree [File Path] -To convert a single file and filter for Orthopositronium"<<std::endl<<std::endl;
+    std::cout << "\t USAGE: ./FilterToTree [Folder Path] -To convert every file inside the target folder and filter for Orthopositronium"<<std::endl;
+    std::cout << "\t USAGE: ./FilterToTree [File Path]   -To convert a single file and filter for Orthopositronium"<<std::endl<<std::endl;
     std::cout << "\t The output is stored in ../Dati" << std::endl;
     exit(1);
 
@@ -64,33 +64,22 @@ int main( int argc, char* argv[] ) {
 
 }
 
+bool IsValid(float charge[]) {
 
-bool IsValid(float charge[]){
+    const float Q_1200_R[] = {-50, -50, -1500, -900, -700, -1000, -700, -1000, -750, -450, -400, -600, -700, -1000, -1000, -1300};
+    const float Q_1200_L[] = {-3800, -2200, -1600, -2600, -1750, -2500, -2000, -1100, -900, -1500, -1600, -2300, -2300, 3300};
+    const float Threshold = -50;
 
-  int Trigger = 0;
-  int Ev = 0;
+    int Trigger = 0;
+    int Ev = 0;
 
-  float Q_1200_R []= {-50,-50,-1500,-900,-700,-1000,-700,-1000,-750,-450,-400,-600,-700,-1000,-1000,-1300};
-  float Q_1200_L [] = {-3800,-2200,-1600,-2600,-1750,-2500,-2000,-1100,-900,-1500,-1600,-2300,-2300,3300};
-  float Treshold = -50;
-
-
-    for (int i = 0; i < 16; i++)
-    {
-      Trigger += int((charge[i] < Q_1200_R[i])&&(charge[i] > Q_1200_L[i]));
-      Ev += int((charge[i]<Treshold));
-
+    for (int i = 0; i < 16; ++i) {
+        Trigger += (charge[i] < Q_1200_R[i] && charge[i] > Q_1200_L[i]);
+        Ev += (charge[i] < Threshold);
     }
-    
 
-  
-    if ((Trigger==1) && (Ev>=3) && (Ev<=5)){
-        return 1;}
-    else{
-        return  0;
-    }
+    return (Trigger == 1) && (Ev >= 3) && (Ev <= 5);
 }
-
 
 bool isNumber(const std::string& s) {
 
@@ -171,28 +160,28 @@ void Parse(fs::path path){
 
       if( fs.good() ) {
 
-        std::cout << "->   Starting parsing file:" << std::endl;
+        std::cout << "-->  Starting parsing file:" << std::endl;
         nch=0;
+        std::istringstream iss;
 
         while( getline(fs,line) ) {
 
           //std::cout << line << std::endl;
           line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
 
-          std::string delimiter = " ";
-          size_t pos = 0;
           std::vector<std::string> words;
+          std::vector< std::string > words_cleaned;
           std::string word;
 
-          while ((pos = line.find(delimiter)) != std::string::npos) {
-            word = line.substr(0, pos);
-            line.erase(0, pos + delimiter.length());
-            words.push_back(word);
-          }
+          iss.clear();
+          iss.str(line);
+    
+          while (std::getline(iss, word, ' ')) {
+              if (isNumber(word)) {
 
-          std::vector< std::string > words_cleaned;
-          for( unsigned i=0; i<words.size(); ++i ) {
-            if( isNumber(words[i]) ) words_cleaned.push_back( words[i] );
+                  words_cleaned.push_back(word);
+              }
+              words.push_back(word);
           }
 
           if (words.size()==0) continue; // protect from truncated data-taking 
@@ -212,28 +201,28 @@ void Parse(fs::path path){
             wasReadingEvent = true;
             readyForPulseShape = true;
 
-            ch       [nch] = atoi(words_cleaned[0].c_str());
-            base     [nch] = atof(words_cleaned[BaseIndex].c_str());
-            amp      [nch] = atof(words_cleaned[BaseIndex+1].c_str());
-            charge   [nch] = atof(words_cleaned[BaseIndex+2].c_str());
-            letime   [nch] = atof(words_cleaned[BaseIndex+3].c_str());
-            tetime   [nch] = atof(words_cleaned[BaseIndex+4].c_str());
-            //ratecount[ch] = atof(words_cleaned[15].c_str());
+            ch[nch]     = std::stoi(words_cleaned[0]);
+            base[nch]   = std::stof(words_cleaned[BaseIndex]);
+            amp[nch]    = std::stof(words_cleaned[BaseIndex + 1]);
+            charge[nch] = std::stof(words_cleaned[BaseIndex + 2]);
+            letime[nch] = std::stof(words_cleaned[BaseIndex + 3]);
+            tetime[nch] = std::stof(words_cleaned[BaseIndex + 4]);
+            
 
             nch += 1;
 
           } else if( readyForPulseShape && IsAscii) {
           //} else if( readyForPulseShape && ch[nch]>=0 ) {
       
-            for( unsigned i=0; i<words.size(); ++i ) 
-              pshape[nch-1][i] = atof(words[i].c_str());
-
+            for( unsigned i=0; i<words_cleaned.size(); ++i ) {
+              pshape[nch-1][i] = std::stof(words_cleaned[i]);
+            }
             readyForPulseShape = false;
       
           }
 
           if( words[0]=="===" && (words[1]==PEvent)&& wasReadingEvent==false ) {
-            ev            = atoi(words[2].c_str());	
+            ev = std::stoi(words[2]);
             //std::cout << ev << std::endl;
           }
 
@@ -253,7 +242,7 @@ void Parse(fs::path path){
       outfile->Close();
 
       std::cout << "-> Tree saved in: " << outfile->GetName() << std::endl;
-      }
+    }
 
 }
 
