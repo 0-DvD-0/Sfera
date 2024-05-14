@@ -7,6 +7,8 @@
 #include <string>
 #include <stdlib.h>
 #include <sys/stat.h>
+
+
 //include<windows.h>
 
 namespace fs = std::filesystem;
@@ -29,6 +31,8 @@ int main( int argc, char* argv[] ) {
   }
 
   std::string Input = argv[1];
+
+
 
   //Parse File
   if (Input.rfind(".dat")!=std::string::npos)
@@ -60,25 +64,27 @@ int main( int argc, char* argv[] ) {
 
 }
 
+
 bool IsValid(float charge[]){
 
-  int sum = 0;
+  int Trigger = 0;
+  int Ev = 0;
 
-  float Q_lims[] = {-100000,-1000000,-1000000,-1000000,  
-                -350, -600, -10000, -600, 
-                -10000, -250, -250, -350, 
-                -350, -550, -550, -800};
-
+  float Q_1200_R []= {-50,-50,-1500,-900,-700,-1000,-700,-1000,-750,-450,-400,-600,-700,-1000,-1000,-1300};
+  float Q_1200_L [] = {-3800,-2200,-1600,-2600,-1750,-2500,-2000,-1100,-900,-1500,-1600,-2300,-2300,3300};
+  float Treshold = -50;
 
 
     for (int i = 0; i < 16; i++)
     {
-      sum += int(charge[i] < Q_lims[i]);
+      Trigger += int((charge[i] < Q_1200_R[i])&&(charge[i] > Q_1200_L[i]));
+      Ev += int((charge[i]<Treshold));
+
     }
     
 
   
-    if ((sum>=2) &&(sum<=5)){
+    if ((Trigger==1) && (Ev>=3) && (Ev<=5)){
         return 1;}
     else{
         return  0;
