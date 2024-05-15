@@ -7,6 +7,8 @@
 #include <string>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sstream>
+
 
 
 //include<windows.h>
