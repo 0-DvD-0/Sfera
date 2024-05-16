@@ -67,10 +67,11 @@ int main( int argc, char* argv[] ) {
 }
 
 bool IsValid(float charge[]) {
-
-    const float Q_1200_R[] = {-50, -50, -1500, -900, -700, -1000, -700, -1000, -750, -450, -400, -600, -700, -1000, -1000, -1300};
-    const float Q_1200_L[] = {-3800, -2200, -1600, -2600, -1750, -2500, -2000, -1100, -900, -1500, -1600, -2300, -2300, 3300};
+    
     const float Threshold = -50;
+
+    const float Q_1200_R[] = {-40000,-40000,-1500, -900, -700, -1000, -700, -1000, -750, -450, -400, -600, -700, -1000, -1000, -1300};
+    const float Q_1200_L[] = {-50,-50,-3800, -2200, -1600, -2600, -1750, -2500, -2000, -1100, -900, -1500, -1600, -2300, -2300, 3300};
 
     int Trigger = 0;
     int Ev = 0;
@@ -175,6 +176,7 @@ void Parse(fs::path path){
           //std::cout << line << std::endl;
           line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
 
+          word.clear();
           words.clear();
           words_cleaned.clear();
           iss.clear();
