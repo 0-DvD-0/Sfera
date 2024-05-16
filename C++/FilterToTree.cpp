@@ -1,3 +1,8 @@
+// per compilare:
+//export ROOTSYS=/snap/root-framework/931/usr/local 
+//export LD_LIBRARY_PATH=$ROOTSYS/lib
+//g++ -o filter FilterToTree.cpp `$ROOTSYS/bin/root-config --cflags --libs`
+
 #include "TFile.h"
 #include "TTree.h"
 
