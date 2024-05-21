@@ -280,7 +280,7 @@ std::vector<std::vector<std::string>> read_csv_file(const std::string& file_path
     std::ifstream file(file_path);
     if (!file) {
         std::cerr << "Error: Unable to open file " << file_path << std::endl;
-        return csv_data;
+        exit(1);
     }
 
     std::string line;
