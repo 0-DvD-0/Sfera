@@ -13,75 +13,91 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sstream>
-
+#include <vector>
 
 
 //include<windows.h>
 
 namespace fs = std::filesystem;
+using csv = std::vector<std::vector<std::string>>; 
 
 bool isNumber(const std::string& s);
 void Parse(fs::path path);
 bool IsValid(float charge[]);
 
+csv read_csv_file(const std::string& file_path);
 
-int main( int argc, char* argv[] ) {
+void printCSVTable(const std::vector<std::vector<std::string>>& csv_data);
 
-  //Input check
-  if( argc != 2 ) {
+const int  CHANNELS = 16;
 
-    std::cout << "\t USAGE: ./FilterToTree [Folder Path] -To convert every file inside the target folder and filter for Orthopositronium"<<std::endl;
-    std::cout << "\t USAGE: ./FilterToTree [File Path]   -To convert a single file and filter for Orthopositronium"<<std::endl<<std::endl;
-    std::cout << "\t The output is stored in ../Dati" << std::endl;
-    exit(1);
-
-  }
-
-  std::string Input = argv[1];
+float Q_1200_R[CHANNELS];
+float Q_1200_L[CHANNELS]; 
 
 
 
-  //Parse File
-  if (Input.rfind(".dat")!=std::string::npos)
-  { 
-    const fs::path fpath{Input};
-    Parse(fpath);
-  }
-
-  //If Folder iterate over file
-  else if (std::filesystem::is_directory(Input))
-  {
-
-    std::cout<<"-> Opening folder:"<<Input<<std::endl;
-    const fs::path Dir{Input};
-
-
-    for (auto const& file : fs::directory_iterator{Dir}){
-
-      Parse(file.path());
-    
+int main(int argc, char* argv[]) {
+    // Input check
+    if (argc != 3) {
+        std::cout << "\n\tUSAGE: ./FilterToTree [Folder Path or File Path] [filter.csv]\n\n"
+                     "\t-To convert every file inside the folder and filter for Orthopositronium.\n"
+                     "\t-To convert a single file and filter for Orthopositronium.\n"
+                     "\n\tThe output is stored in ../Dati" << std::endl;
+        exit(1);
     }
-  }else{
 
-    std::cout<<"\t Bad Input path :("<<std::endl;
-    exit(1);
-  }
-  
-  return 0;
+    std::string inputPath = argv[1];
+    csv csvData = read_csv_file(argv[2]);
 
+    printCSVTable(csvData);
+
+    int skipRows = 1;
+
+    for (int i = 0; i < CHANNELS; i++) {
+        Q_1200_L[i] = std::stof(csvData[i + skipRows][1]);
+        Q_1200_R[i] = std::stof(csvData[i + skipRows][2]);
+    }
+
+    // Parse input file
+    if (inputPath.rfind(".dat") != std::string::npos) {
+        const fs::path filePath{inputPath};
+        Parse(filePath);
+    }
+
+    // If input is a folder, iterate over files
+    else if (std::filesystem::is_directory(inputPath)) {
+        std::cout << "-> Opening folder: " << inputPath << std::endl;
+        for (const auto& file : fs::directory_iterator{inputPath}) {
+            Parse(file.path());
+        }
+    }
+    else {
+        std::cout << "\tBad Input path :(" << std::endl;
+        exit(1);
+    }
+
+    return 0;
+}
+void printCSVTable(const csv& csv_data) {
+  int cellWidth = 10;
+  std::cout<<std::endl<<"   Printing Table:"<<std::endl<<std::endl;
+    for (const auto& row : csv_data) {
+        for (const auto& cell : row) {
+            std::cout<< std::setw(cellWidth)<< cell; // Use tab as delimiter
+        }
+        std::cout << std::endl;
+    }
+    std::cout<<std::endl;
 }
 
 bool IsValid(float charge[]) {
     
     const float Threshold = -50;
 
-    const float Q_1200_R[] = {-40000,-40000,-1500, -900, -700, -1000, -700, -1000, -750, -450, -400, -600, -700, -1000, -1000, -1300};
-    const float Q_1200_L[] = {-50,-50,-3800, -2200, -1600, -2600, -1750, -2500, -2000, -1100, -900, -1500, -1600, -2300, -2300, 3300};
-
     int Trigger = 0;
     int Ev = 0;
 
-    for (int i = 0; i < 16; ++i) {
+    for (int i = 0; i < CHANNELS; ++i) {
         Trigger += (charge[i] < Q_1200_R[i] && charge[i] > Q_1200_L[i]);
         Ev += (charge[i] < Threshold);
     }
@@ -259,3 +275,27 @@ void Parse(fs::path path){
 
 }
 
+std::vector<std::vector<std::string>> read_csv_file(const std::string& file_path) {
+    std::vector<std::vector<std::string>> csv_data;
+    std::ifstream file(file_path);
+    if (!file) {
+        std::cerr << "Error: Unable to open file " << file_path << std::endl;
+        return csv_data;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::vector<std::string> row;
+        std::istringstream iss(line);
+        std::string cell;
+        while (std::getline(iss, cell, ',')) {
+            // Trim leading and trailing whitespaces from the cell
+            cell.erase(0, cell.find_first_not_of(" \t\n\r\f\v"));
+            cell.erase(cell.find_last_not_of(" \t\n\r\f\v") + 1);
+            row.push_back(cell);
+        }
+        csv_data.push_back(row);
+    }
+
+    return csv_data;
+}
