@@ -22,12 +22,15 @@ namespace fs = std::filesystem;
 using csv = std::vector<std::vector<std::string>>; 
 
 bool isNumber(const std::string& s);
-void Parse(fs::path path);
 bool IsValid(float charge[]);
 
 csv read_csv_file(const std::string& file_path);
 
-void printCSVTable(const std::vector<std::vector<std::string>>& csv_data);
+void printUsage();
+void Parse(fs::path path);
+void printCSVTable(const csv& csv_data);
+void processInput(const std::string& inputPath, const std::string& filterFile);
+
 
 const int  CHANNELS = 16;
 
@@ -35,49 +38,52 @@ float Q_1200_R[CHANNELS];
 float Q_1200_L[CHANNELS]; 
 
 
-
 int main(int argc, char* argv[]) {
     // Input check
     if (argc != 3) {
-        std::cout << "\n\tUSAGE: ./FilterToTree [Folder Path or File Path] [filter.csv]\n\n"
-                     "\t-To convert every file inside the folder and filter for Orthopositronium.\n"
-                     "\t-To convert a single file and filter for Orthopositronium.\n"
-                     "\n\tThe output is stored in ../Dati" << std::endl;
+        printUsage();
         exit(1);
     }
 
     std::string inputPath = argv[1];
-    csv csvData = read_csv_file(argv[2]);
+    std::string filterFile = argv[2];
 
+    processInput(inputPath, filterFile);
+
+    return 0;
+}
+
+void printUsage() {
+    std::cout << "\n\tUSAGE: ./FilterToTree [Folder Path or File Path] [filter.csv]\n\n"
+                 "\t-To convert every file inside the folder and filter for Orthopositronium.\n"
+                 "\t-To convert a single file and filter for Orthopositronium.\n"
+                 "\n\tThe output is stored in ../Dati" << std::endl;
+}
+
+void processInput(const std::string& inputPath, const std::string& filterFile) {
+    csv csvData = read_csv_file(filterFile);
     printCSVTable(csvData);
 
     int skipRows = 1;
-
     for (int i = 0; i < CHANNELS; i++) {
         Q_1200_L[i] = std::stof(csvData[i + skipRows][1]);
         Q_1200_R[i] = std::stof(csvData[i + skipRows][2]);
     }
 
-    // Parse input file
     if (inputPath.rfind(".dat") != std::string::npos) {
         const fs::path filePath{inputPath};
         Parse(filePath);
-    }
-
-    // If input is a folder, iterate over files
-    else if (std::filesystem::is_directory(inputPath)) {
+    } else if (std::filesystem::is_directory(inputPath)) {
         std::cout << "-> Opening folder: " << inputPath << std::endl;
         for (const auto& file : fs::directory_iterator{inputPath}) {
             Parse(file.path());
         }
-    }
-    else {
+    } else {
         std::cout << "\tBad Input path :(" << std::endl;
         exit(1);
     }
-
-    return 0;
 }
+
 void printCSVTable(const csv& csv_data) {
   int cellWidth = 10;
   std::cout<<std::endl<<"   Printing Table:"<<std::endl<<std::endl;
@@ -275,7 +281,7 @@ void Parse(fs::path path){
 
 }
 
-std::vector<std::vector<std::string>> read_csv_file(const std::string& file_path) {
+csv read_csv_file(const std::string& file_path) {
     std::vector<std::vector<std::string>> csv_data;
     std::ifstream file(file_path);
     if (!file) {
