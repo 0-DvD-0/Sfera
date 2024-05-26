@@ -6,7 +6,7 @@
         {
             "label": "FilterTiming",
             "type": "shell",
-            "command": "cd build;./FilterTiming ${input:targetFile} ${input:targetFilter} && python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} è stato convertito' ||  python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} non è stato convertito'",
+            "command": "cd build;./FilterTiming ${input:targetFile} ${input:targetFilter} && python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} è stato convertito' da FilterTiming||  python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} non è stato convertito'",
             "problemMatcher": [],
             "options": {
                 "statusbar": {
