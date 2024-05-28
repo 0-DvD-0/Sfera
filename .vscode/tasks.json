@@ -1,0 +1,38 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "FilterTiming",
+            "type": "shell",
+            "command": "cd build;./FilterTiming ${input:targetFile} ${input:targetFilter} && python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} è stato convertito' da FilterTiming||  python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} non è stato convertito'",
+            "problemMatcher": [],
+            "options": {
+                "statusbar": {
+                  "hide" : false,
+                  "label": "FilterTiming $(zap)"
+                }
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "targetFile",
+            "type": "command",
+            "command": "extension.commandvariable.file.pickFile",
+            "args": {
+                "include": "**/*.{dat}"
+            }
+
+        },
+        {   
+            "id": "targetFilter",
+            "type": "command",
+            "command": "extension.commandvariable.file.pickFile",
+            "args": {
+                "include": "**/*.{csv}"
+            }
+        }
+    ] 
+}

@@ -21,10 +21,13 @@ measToTree: measToTree_folder.cpp
 EverythingToTree: EverythingToTree.cpp
 	mkdir -p $(MYDIR)
 	$(CC) -Wall $(INCLUDES) -o ../build/EverythingToTree EverythingToTree.cpp $(ROOTFLAG) $(EXTRALIBS)
-all: asciiToTree measToTree EverythingToTree
+FilterTiming: FilterTiming.cpp
+	mkdir -p $(MYDIR)
+	$(CC) -Wall $(INCLUDES) -o ../build/FilterTiming FilterTiming.cpp $(ROOTFLAG) $(EXTRALIBS)
+all: asciiToTree measToTree EverythingToTree FilterCobalto
 
 
 clean:
-	rm ../build/asciiToTree ../build/measToTree ../build/EverythingToTree
+	rm ../build/asciiToTree ../build/measToTree ../build/EverythingToTree ../build/FilterCobalto
 
 
