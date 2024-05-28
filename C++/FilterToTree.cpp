@@ -36,7 +36,8 @@ const int  CHANNELS = 16;
 
 float Q_1200_R[CHANNELS];
 float Q_1200_L[CHANNELS]; 
-
+float Q_511[CHANNELS]; //limite sinistro per gamma piccoli
+//trigger Globale
 
 int main(int argc, char* argv[]) {
     // Input check
@@ -68,6 +69,9 @@ void processInput(const std::string& inputPath, const std::string& filterFile) {
     for (int i = 0; i < CHANNELS; i++) {
         Q_1200_L[i] = std::stof(csvData[i + skipRows][1]);
         Q_1200_R[i] = std::stof(csvData[i + skipRows][2]);
+        Q_511[i] = std::stof(csvData[i + skipRows][3]);
+
+        //leggi il terzo array
     }
 
     if (inputPath.rfind(".dat") != std::string::npos) {
@@ -98,14 +102,12 @@ void printCSVTable(const csv& csv_data) {
 
 bool IsValid(float charge[]) {
     
-    const float Threshold = -50;
-
     int Trigger = 0;
     int Ev = 0;
 
     for (int i = 0; i < CHANNELS; ++i) {
         Trigger += (charge[i] < Q_1200_R[i] && charge[i] > Q_1200_L[i]);
-        Ev += (charge[i] < Threshold);
+        Ev += (charge[i] < Q_511[i]);
     }
 
     return (Trigger == 1) && (Ev >= 3) && (Ev <= 5);
