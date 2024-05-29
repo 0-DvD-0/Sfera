@@ -4,6 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "FilterCobalto",
+            "type": "shell",
+            "command": "cd build;./FilterCobalto ${input:targetFile} ${input:targetFilter} && python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} è stato convertito' da FilterCobalto||  python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} non è stato convertito'",
+            "problemMatcher": [],
+            "options": {
+                "statusbar": {
+                  "hide" : false,
+                  "label": "FilterCobalto $(zap)"
+                }
+            }
+        },
+        {
             "label": "FilterTiming",
             "type": "shell",
             "command": "cd build;./FilterTiming ${input:targetFile} ${input:targetFilter} && python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} è stato convertito' da FilterTiming||  python3 ../TelegramNotifications.py 'Il file: ${input:targetFile} non è stato convertito'",
