@@ -18,19 +18,19 @@ asciiToTree: asciiToTree_Folder.cpp
 measToTree: measToTree_folder.cpp 
 	mkdir -p $(MYDIR)
 	$(CC) -Wall $(INCLUDES) -o ../build/measToTree measToTree_folder.cpp $(ROOTFLAG) $(EXTRALIBS)
-FilterToTree: FilterToTree.cpp
+FilterOrtho: FilterToTree.cpp
 	mkdir -p $(MYDIR)
-	$(CC) -Wall $(INCLUDES) -o ../build/FilterToTree FilterToTree.cpp $(ROOTFLAG) $(EXTRALIBS)
+	$(CC) -Wall $(INCLUDES) -o ../build/FilterOrtho FilterOrtho.cpp $(ROOTFLAG) $(EXTRALIBS)
 EverythingToTree: EverythingToTree.cpp
 	mkdir -p $(MYDIR)
 	$(CC) -Wall $(INCLUDES) -o ../build/EverythingToTree EverythingToTree.cpp $(ROOTFLAG) $(EXTRALIBS)
 FilterTiming: FilterTiming.cpp
 	mkdir -p $(MYDIR)
 	$(CC) -Wall $(INCLUDES) -o ../build/FilterTiming FilterTiming.cpp $(ROOTFLAG) $(EXTRALIBS)
-all: asciiToTree measToTree EverythingToTree FilterTiming FilterToTree
+all: asciiToTree measToTree EverythingToTree FilterTiming FilterOrtho
 
 
 clean:
-	rm ../build/asciiToTree ../build/measToTree ../build/EverythingToTree ../build/FilterCobalto
+	rm ../build/asciiToTree ../build/measToTree ../build/EverythingToTree ../build/FilterOrtho ../build/FilterTiming
 
 
