@@ -18,7 +18,7 @@ asciiToTree: asciiToTree_Folder.cpp
 measToTree: measToTree_folder.cpp 
 	mkdir -p $(MYDIR)
 	$(CC) -Wall $(INCLUDES) -o ../build/measToTree measToTree_folder.cpp $(ROOTFLAG) $(EXTRALIBS)
-FilterOrtho: FilterToTree.cpp
+FilterOrtho: FilterOrtho.cpp
 	mkdir -p $(MYDIR)
 	$(CC) -Wall $(INCLUDES) -o ../build/FilterOrtho FilterOrtho.cpp $(ROOTFLAG) $(EXTRALIBS)
 EverythingToTree: EverythingToTree.cpp
