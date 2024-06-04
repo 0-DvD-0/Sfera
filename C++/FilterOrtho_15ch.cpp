@@ -39,6 +39,7 @@ float Q_1200_L[CHANNELS];
 float Q_511[CHANNELS]; //limite sinistro per gamma piccoli
 //trigger Globale
 
+
 int main(int argc, char* argv[]) {
     // Input check
     if (argc != 3) {
